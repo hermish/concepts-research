@@ -39,8 +39,6 @@ function createJudgmentTemplate(judgments) {
 	};
 }
 
-/**
-*/
 function assignScores(questionsAndAnswers) {
 	var allQuestions = questionsAndAnswers.questions,
 		allAnswers = questionsAndAnswers.answers,
