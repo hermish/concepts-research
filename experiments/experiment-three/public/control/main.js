@@ -106,7 +106,7 @@ function fillDisplayBlockPages(data, questions, scores, answers) {
 			text = '> **' + questions[pos] + '**\n\n> **' +
 				scores[pos] +
 				'** people upvoted this question\n\n' +
-				answers[pos];
+				answers[pos] + '\n\n\n';
 			output.push(text);
 		}
 	}
