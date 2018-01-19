@@ -1,90 +1,115 @@
-/* CONSTANTS */
-var HIGH_SCORES = 3365,
-	LOW_SCORES = 33,
+// CONSTANTS
+var MIDDLE = 240,
+	HIGH_SCORES = 2405,
+	LOW_SCORES = 24,
 	STDEV = 10,
-	GROUP_SIZE = 5;
+	GROUP_SIZE = 10;
 
-/* RANDOMIZATION TOOLS */
+// RANDOMIZATION TOOLS
+
+/**
+@param judgments: {questions: [String], 
+				   choices: [[String]]}
+	an object which contains the series of participant judgments and 
+	accompanying choices.
+
+@return: {questions: [String],
+		  choices: [[String]],
+		  indicies: [int]}
+	an object which contains the series of judgements and choices in the
+	indentical randomized order
+*/
 function createJudgmentTemplate(judgments) {
-	var allQuestions = judgments.questions,
+	var allJudgments = judgments.questions,
 		allChoices = judgments.choices,
-		grouped = allQuestions.map(function (element, index) {
-			return [element, allChoices[index]];
+		allIndicies = randomTools.range(allJudgments.length),
+
+		randomIndicies = jsPsych.randomization.shuffle(allIndicies),
+		randomQuestions = randomIndicies.map(function (number) {
+			return allJudgments[number];
 		}),
-		randomGrouped = jsPsych.randomization.shuffle(grouped),
-		randomQuestions = randomGrouped.map(function (pair) {return pair[0]; }),
-		randomChoices = randomGrouped.map(function (pair) {return pair[1]; });
+		randomChoices = randomIndicies.map(function (number) {
+			return allChoices[number];
+		})
 
 	return {
 		questions: randomQuestions,
-		choices: randomChoices
+		choices: randomChoices,
+		indicies: randomIndicies
 	};
 }
 
+/**
+*/
 function assignScores(questionsAndAnswers) {
-	var groupID = jsPsych.randomization.sample(['highA', 'highB'], 1, false)[0],
-		highScores = randomTools.getNormalRandom(HIGH_SCORES, STDEV, GROUP_SIZE),
-		lowScores = randomTools.getNormalRandom(LOW_SCORES, STDEV, GROUP_SIZE),
-		// Collects questions, answers and scores
-		allQuestions = questionsAndAnswers.questions,
+	var allQuestions = questionsAndAnswers.questions,
 		allAnswers = questionsAndAnswers.answers,
-		allScores = groupID === 'highA' ? 
-			highScores.concat(lowScores) : 
-			lowScores.concat(highScores),
-		// Package into a group!
-		grouped = allQuestions.map(function (element, index) {
-			return [element, Math.round(allScores[index]), allAnswers[index]];
-		}),
-		// Shuffle questions
-		questionScores = jsPsych.randomization.shuffle(grouped),
-		// Extract the questions and scores to save
-		randomQuestions = questionScores.map(function (element) {return element[0]; }),
-		randomScores = questionScores.map(function (element) {return element[1]; });
+		allIndicies = randomTools.range(allQuestions.length),
 
-	jsPsych.data.addProperties({condition: groupID});
-	jsPsych.data.addProperties({randomQuestions: randomQuestions});
-	jsPsych.data.addProperties({randomScores: randomScores});
-	return questionScores;
+		chosenIndicies = jsPsych.randomization.sample(allIndicies, 
+			GROUP_SIZE, false),
+		chosenQuestions = chosenIndicies.map(function (number) {
+			return allQuestions[number];
+		}),
+		chosenAnswers = chosenIndicies.map(function (number) {
+			return allAnswers[number];
+		}),
+
+		highScores = randomTools.getNormalRandom(HIGH_SCORES, STDEV,
+			GROUP_SIZE / 2),
+		lowScores = randomTools.getNormalRandom(LOW_SCORES, STDEV,
+			GROUP_SIZE / 2),
+		allScores = highScores.concat(lowScores),
+		randomScores = jsPsych.randomization.shuffle(allScores).map(Math.round)
+
+	return {
+		indicies: chosenIndicies,
+		questions: chosenQuestions,
+		answers: chosenAnswers,
+		scores: randomScores
+	};
 }
 
-function fillJudgementBlock(judgementBlock, questionScores) {
-	var pos, questionText, questionScore, text;
-	for (pos = 0; pos < questionScores.length; pos++) {
-		questionText = questionScores[pos][0];
-		questionScore = questionScores[pos][1];
-		text = '### Question\n' + 
-			'> **' + questionText + '**\n\n' + 
-			'> **' + questionScore.toString() + '** people upvoted this question\n\n' +
+function getJudgementBlockTimeline(questions, scores) {
+	var timeline = [],
+		pos, text;
+	for (pos = 0; pos < questions.length; pos++) {
+		text = '### Question\n> **' + 
+			questions[pos] +
+			'**\n\n> **' +
+			scores[pos].toString() + 
+			'** people upvoted this question\n\n' +
 			'### Your Responses';
-		judgementBlock.timeline.push(
+		timeline.push(
 			{preamble: converter.makeHtml(text)}
 		);
 	}
+	return timeline;
 }
 
-function fillChooseBlock(chooseBlock, questionScores) {
-	var pos, questionText, questionScore, text;
-	for (pos = 0; pos < questionScores.length; pos++) {
-		questionText = questionScores[pos][0];
-		questionScore = questionScores[pos][1];
-		text = questionText + ' [' + questionScore.toString() + ' people upvoted this question]';
-		chooseBlock.questions.push(text)
+function getChooseBlockQuestions(questions, scores) {
+	var timeline = [],
+		pos, text;
+	for (pos = 0; pos < questions.length; pos++) {
+		text = questions[pos] + ' [' + scores[pos].toString() + 
+			' people upvoted this question]';
+		timeline.push(text);
 	}
+	return timeline;
 }
 
-function fillDisplayBlockPages(questionScores, data) {
-	var pos, questionText, questionScore, text,
-		output = ['### Explanations'],
-		resp = JSON.parse(data.responses);
+function fillDisplayBlockPages(data, questions, scores, answers) {
+	var output = [],
+		resp = JSON.parse(data.responses),
+		pos, text;
+	output.push('### Explanations');
 	for (pos = 0; pos < data.responses.length; pos++) {
 		if (resp['Q' + pos.toString()] === 'Reveal Answer') {
-			questionText = questionScores[pos][0];
-			questionScore = questionScores[pos][1];
-			questionAnswer = questionScores[pos][2];
-			text = '> **' + questionText + '**\n\n' + 
-				'> **' + questionScore.toString() + '** people upvoted this question\n\n' +
-				questionAnswer;
-			output.push(text)
+			text = '> **' + questions[pos] + '**\n\n> **' +
+				scores[pos] +
+				'** people upvoted this question\n\n' +
+				answers[pos];
+			output.push(text);
 		}
 	}
 	return [converter.makeHtml(output.join('\n'))];
@@ -107,7 +132,8 @@ var consentBlock = {
 	on_finish: function(data) {
 		var resp = JSON.parse(data.responses);
 		if (resp.Q0 === "I do not consent to participate") {
-			jsPsych.endExperiment(converter.makeHtml(literals.consentFailureMessage));
+			jsPsych.endExperiment(converter.makeHtml(
+				literals.consentFailureMessage));
 		}
 	}
 };
@@ -120,22 +146,29 @@ var instructionsBlock = {
 	show_clickable_nav: true
 };
 
-// Create template for likert questions and fills the judgements in randomized order
+// Create template for likert questions and fills the judgements in randomized 
+// order
 var randomJudgements = createJudgmentTemplate(judgments);
-jsPsych.data.addProperties({randomJudgements: randomJudgements.questions});
+jsPsych.data.addProperties({judgmentIndicies: randomJudgements.indicies});
 
 var judgementBlock = {
 	type: 'survey-likert',
 	questions: randomJudgements.questions,
 	required: [true, true, true, true, true],
 	randomize_order: false,
-	labels: randomJudgements.choices,
-	timeline: []
+	labels: randomJudgements.choices
 };
 
 // Fills out the template with questions and scores
 var questionScores = assignScores(questionsAndAnswers);
-fillJudgementBlock(judgementBlock, questionScores);
+jsPsych.data.addProperties({
+	questionIndicies: questionScores.indicies,
+	questionScores: questionScores.scores
+});
+
+judgementBlock.timeline = getJudgementBlockTimeline(
+	questionScores.questions,
+	questionScores.scores);
 
 // PHASE II
 // Display instructions
@@ -153,18 +186,21 @@ var chooseBlock = {
 	randomize_order: false,
 	required: [true, true, true, true, true, true, true, true, true, true],
 	options: ['Reveal Answer', 'Keep Hidden'],
-	questions: [],
 };
 
-fillChooseBlock(chooseBlock, questionScores);
+chooseBlock.questions = getChooseBlockQuestions(
+	questionScores.questions,
+	questionScores.scores);
 
 // Displays answers to questions choosen questions
 var displayBlock = {
 	type: 'instructions',
 	pages: function () {
-		return fillDisplayBlockPages( 
-			questionScores,
-			jsPsych.data.getLastTrialData()
+		return fillDisplayBlockPages(
+			jsPsych.data.getLastTrialData(),
+			questionScores.questions,
+			questionScores.scores,
+			questionScores.answers
 		);
 	},
 	show_clickable_nav: true
@@ -191,7 +227,7 @@ var bufferBlock = {
 	}
 };
 
-/* RUN EXPERIMENT */
+// RUN EXPERIMENT
 var timeline = [
 	consentBlock,
 	instructionsBlock,

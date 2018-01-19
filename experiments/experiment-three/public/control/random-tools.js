@@ -10,12 +10,18 @@ var randomTools = {
 		return u * c;
 	},
 
-	getNormalRandom: function (mean, stdev, number) {
+	getNormalRandom: function(mean, stdev, number) {
 		var output = [];
 		while (number > 0) {
 			output.push(randomTools.gaussRandom() * stdev + mean);
 			number--;
 		}
 		return output;
+	},
+
+	range: function(endPoint) {
+		return Array.apply(null, Array(endPoint)).map(
+			function (_, index) {return index;}
+		);
 	}
 }
