@@ -36,8 +36,8 @@ literals.consentPage = [
 	'asked to answer questions about how the clip or music made you feel.\n',
 
 	'You may refrain from answering any questions that make you uncomfortable and may withdraw your participation at' +
-	' any time even after completing the experiment without penalty. The study takes about 10 minutes to complete,' +
-	' for which you will receive $1.25.\n',
+	' any time even after completing the experiment without penalty. The study takes about 12 minutes to complete,' +
+	' for which you will receive $1.50.\n',
 
 	'There are no direct benefits to you as a participant, but this research will help us understand various ' +
 	'cognitive processes, which may benefit society in a number of ways, including influencing legal and ' +
