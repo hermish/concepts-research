@@ -4,23 +4,31 @@ import itertools
 THRESHOLD = 240.9
 
 
-def get_split_labels(num_questions):
+def get_all_labels(num_questions):
     """
     :param num_questions: (int) the number of questions
-    :return: [str], [str] two lists corresponding to the low and high question
-        columns respectively
+    :return: [str], a lists list to the low and high question
+        columns name prefixes in order
     """
     high_question_labels = ['high_q{}'.format(num) for
                             num in range(num_questions // 2)]
     low_question_labels = ['low_q{}'.format(num) for
                            num in range(num_questions // 2)]
-    return low_question_labels, high_question_labels
+    return low_question_labels + high_question_labels
 
 
-def get_col_labels(num_questions, num_judgements):
+def get_judgment_labels(num_judgments):
+    """
+    :param num_judgments: (int) the number of num_judgments
+    :return: [str], a list of all the judgment suffixes in columns names
+    """
+    return ['j{}'.format(num) for num in range(num_judgments)]
+
+
+def get_col_labels(num_questions, num_judgments):
     """
     :param num_questions: (int) the number of questions
-    :param num_judgements: (int) the number of responses
+    :param num_judgments: (int) the number of responses
     :return: (gen) a generator yielding strings for column names
     """
     yield 'consent'
@@ -28,13 +36,13 @@ def get_col_labels(num_questions, num_judgements):
         yield from ['low_q{}_score'.format(q_num),
                     'low_q{}_index'.format(q_num),
                     'low_q{}_choice'.format(q_num)]
-        for j_num in range(num_judgements):
+        for j_num in range(num_judgments):
             yield 'low_q{}_j{}'.format(q_num, j_num)
     for q_num in range(num_questions // 2):
         yield from ['high_q{}_score'.format(q_num),
                     'high_q{}_index'.format(q_num),
                     'high_q{}_choice'.format(q_num)]
-        for j_num in range(num_judgements):
+        for j_num in range(num_judgments):
             yield 'high_q{}_j{}'.format(q_num, j_num)
 
 
