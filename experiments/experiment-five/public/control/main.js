@@ -1,9 +1,5 @@
 // CONSTANTS
-var MIDDLE = 240,
-	HIGH_SCORES = 2405,
-	LOW_SCORES = 24,
-	STDEV = 10,
-	GROUP_SIZE = 10;
+var GROUP_SIZE = 10;
 
 // RANDOMIZATION TOOLS
 
@@ -39,75 +35,27 @@ function createJudgmentTemplate(judgments) {
 	};
 }
 
-function assignScores(questionsAndAnswers) {
-	var allQuestions = questionsAndAnswers.questions,
-		allAnswers = questionsAndAnswers.answers,
-		allIndicies = randomTools.range(allQuestions.length),
-
+function chooseQuestions(rawQuestions) {
+	var allIndicies = randomTools.range(rawQuestions.length),
 		chosenIndicies = jsPsych.randomization.sample(allIndicies, 
 			GROUP_SIZE, false),
 		chosenQuestions = chosenIndicies.map(function (number) {
-			return allQuestions[number];
-		}),
-		chosenAnswers = chosenIndicies.map(function (number) {
-			return allAnswers[number];
-		}),
-
-		highScores = randomTools.getNormalRandom(HIGH_SCORES, STDEV,
-			GROUP_SIZE / 2),
-		lowScores = randomTools.getNormalRandom(LOW_SCORES, STDEV,
-			GROUP_SIZE / 2),
-		allScores = highScores.concat(lowScores),
-		randomScores = jsPsych.randomization.shuffle(allScores).map(Math.round)
-
+			return rawQuestions[number];
+		});
 	return {
 		indicies: chosenIndicies,
-		questions: chosenQuestions,
-		answers: chosenAnswers,
-		scores: randomScores
+		questions: chosenQuestions
 	};
 }
 
-function getJudgementBlockTimeline(questions, scores) {
-	var timeline = [],
-		pos, text;
-	for (pos = 0; pos < questions.length; pos++) {
-		text = '### Question\n> **' + 
-			questions[pos] +
-			'**';
-		timeline.push(
-			{preamble: converter.makeHtml(text)}
-		);
-	}
+function getJudgementBlockTimeline(chosenQuestions) {
+	var pos,
+		text,
+		timeline = chosenQuestions.map(function (question) {
+			var text = '### Question\n> **' + question + '**';
+			return {preamble: converter.makeHtml(text)}
+		});
 	return timeline;
-}
-
-function getChooseBlockQuestions(questions, scores) {
-	var timeline = [],
-		pos, text;
-	for (pos = 0; pos < questions.length; pos++) {
-		text = questions[pos] + ' [' + scores[pos].toString() + 
-			' people upvoted this question]';
-		timeline.push(text);
-	}
-	return timeline;
-}
-
-function fillDisplayBlockPages(data, questions, scores, answers) {
-	var output = [],
-		resp = JSON.parse(data.responses),
-		pos, text;
-	output.push('### Explanations');
-	for (pos = 0; pos < data.responses.length; pos++) {
-		if (resp['Q' + pos.toString()] === 'Reveal Answer') {
-			text = '> **' + questions[pos] + '**\n\n> **' +
-				scores[pos] +
-				'** people upvoted this question\n\n' +
-				answers[pos] + '\n\n\n';
-			output.push(text);
-		}
-	}
-	return [converter.makeHtml(output.join('\n'))];
 }
 
 /* SURVEY BLOCKS */
@@ -149,57 +97,20 @@ jsPsych.data.addProperties({judgmentIndicies: randomJudgements.indicies});
 var judgementBlock = {
 	type: 'survey-likert',
 	questions: randomJudgements.questions,
-	required: [true, true, true, true, true],
+	required: [true, true, true, true, true, true, true],
 	randomize_order: false,
 	labels: randomJudgements.choices
 };
 
 // Fills out the template with questions and scores
-var questionScores = assignScores(questionsAndAnswers);
+var questionIndicies = chooseQuestions(rawQuestions);
+var chosenQuestions = questionIndicies.questions
 jsPsych.data.addProperties({
-	questionIndicies: questionScores.indicies,
-	questionScores: questionScores.scores
+	questionIndicies: questionIndicies.indicies,
 });
 
-judgementBlock.timeline = getJudgementBlockTimeline(
-	questionScores.questions,
-	questionScores.scores);
 
-// PHASE II
-// Display instructions
-var instructionsTwoBlock = {
-	type: 'instructions',
-	pages: [converter.makeHtml(literals.instructionsTwo)],
-	show_clickable_nav: true
-};
-
-// Prompt users for 5 question to see the responses for
-var chooseBlock = {
-	preamble: [converter.makeHtml(literals.choosePage)],
-	type: 'survey-multi-choose',
-	limit: 5,
-	randomize_order: false,
-	required: [true, true, true, true, true, true, true, true, true, true],
-	options: ['Reveal Answer', 'Keep Hidden'],
-};
-
-chooseBlock.questions = getChooseBlockQuestions(
-	questionScores.questions,
-	questionScores.scores);
-
-// Displays answers to questions choosen questions
-var displayBlock = {
-	type: 'instructions',
-	pages: function () {
-		return fillDisplayBlockPages(
-			jsPsych.data.getLastTrialData(),
-			questionScores.questions,
-			questionScores.scores,
-			questionScores.answers
-		);
-	},
-	show_clickable_nav: true
-};
+judgementBlock.timeline = getJudgementBlockTimeline(chosenQuestions);
 
 // Writes to database
 var bufferBlock = {
@@ -227,9 +138,6 @@ var timeline = [
 	consentBlock,
 	instructionsBlock,
 	judgementBlock,
-	// instructionsTwoBlock,
-	// chooseBlock,
-	// displayBlock,
 	bufferBlock
 ];
 
