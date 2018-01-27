@@ -128,6 +128,8 @@ RUNNING THE EXPERIMENT
 ----------------------------- */
 var timeline = [
 	consentBlock,
+	overallInstructions,
+	
 	phaseOneIntructions,
 	judgementBlock,
 
