@@ -94,3 +94,23 @@ theme_minimal() +
 scale_fill_manual(values=c("#D9B8C5", "#88ABC2"))
 
 # Graph 2
+
+data_exp_two <- data.frame(
+	label=factor(c("Low Scores", "High Scores"), levels=c("Low Scores", "High Scores")),
+	proportion=c(0.4520547945205479, 0.5479452054794521),
+	se=c(0.01132013052992385, 0.011320130529923852)
+)
+
+ggplot(
+	data=data_exp_two,
+	aes(x=label, y=proportion)
+) +
+geom_bar(stat="identity", position = "dodge", width = 0.5, fill="#B1D7BF") + 
+geom_errorbar(
+	aes(
+		ymin=proportion-se, ymax=proportion+se),
+		width=0,
+		size=0.75,
+		position=position_dodge(.9)
+) + 
+theme_minimal()
