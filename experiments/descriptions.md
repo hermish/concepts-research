@@ -1,0 +1,24 @@
+# Descriptions
+
+## Survey-Four
+Experiment were participants were showm only the topic of each questions, and were first asked to make the following judgements:
+
+1. How curious are you to know about the question and its answer?
+2. How popular do you think this question is in this social forum?
+
+For each participant, half the questions were randomly chosen to have high up-vote numbers (mean: 2405), while the remainder were symetrically given very low up-vote numbers (mean: 24). In the second phase, we then asked them to reveal the question and answer to exactly five of the questions they saw during the experiment.
+
+## Survey-Five
+In this experiment, participants were shown the full text of the questions, and asked to make a more complete set of judgements:
+
+1. How curious are you to know about the question and its answer?'
+2. How confident are you that you know the correct answer to this question?
+3. To what extent would knowing the answer to this question be useful to you in the future?
+4. How popular do you think this question is in this social forum?
+5. How well-written do you think this question is?
+6. How surprised are you by the popularity of this question?
+7. To what extent would knowing the answer to this question be useful to you in a social setting?'
+
+Each participant was place into one of two groups, either upvote information was presented, or it was hidden. For the participants in the experimental group, half the questions were randomly chosen to have high up-vote numbers, similar to the previous experiment.
+
+In the second phase, again, we then asked them to reveal the answers to exactly five of the questions they saw during the experiment.
