@@ -1,14 +1,19 @@
 var converter = new showdown.Converter();
 
-var questionsAndAnswers = randomization.getQuestionsAndAnswers(stimuli.questionInformation)
-var randomJudgements = randomization.createJudgmentTemplate(stimuli.judgments);
-var questionScores = randomization.assignScores(questionsAndAnswers);
+var output = randomization.randomize(stimuli);
+var questionsAndAnswers = output.questionsAndAnswers;
+var randomJudgements = output.randomJudgements;
+var questionScores = output.questionScores;
+var control = output.control;
 
 jsPsych.data.addProperties({judgmentIndicies: randomJudgements.indicies});
 jsPsych.data.addProperties({
+	judgmentIndicies: randomJudgements.indicies,
 	questionIndicies: questionScores.indicies,
-	questionScores: questionScores.scores
+	questionScores: questionScores.scores,
+	control: control
 });
+
 
 /* -----------------------------
 PHASE 0: CONSENT & INTRODUCTION
@@ -45,7 +50,9 @@ PHASE 1: RATING QUESTIONS
 
 var phaseOneIntructions = {
 	type: 'instructions',
-	pages: [converter.makeHtml(literals.phaseOneIntructions)],
+	pages: [converter.makeHtml(control ?
+		literals.phaseOneControlInstructions :
+		literals.phaseOneInstructions)],
 	show_clickable_nav: true
 };
 
@@ -59,7 +66,9 @@ var judgementBlock = {
 
 judgementBlock.timeline = randomization.getJudgementBlockTimeline(
 	questionScores.questions,
-	questionScores.scores);
+	questionScores.scores,
+	control
+);
 
 /* -----------------------------
 PHASE 2: CHOOSING QUESTIONS
@@ -93,7 +102,8 @@ var displayBlock = {
 			jsPsych.data.getLastTrialData(),
 			questionScores.questions,
 			questionScores.scores,
-			questionScores.answers
+			questionScores.answers,
+			control
 		);
 	},
 	show_clickable_nav: true

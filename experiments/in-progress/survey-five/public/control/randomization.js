@@ -5,6 +5,21 @@ var randomization = {
 	STDEV: 10,
 	GROUP_SIZE: 10,
 
+	randomize: function(stimuli) {
+		var groups = [true, false, false],
+			control = jsPsych.randomization.sample(groups, 1, false)[0],
+			questionsAndAnswers = randomization.getQuestionsAndAnswers(stimuli.questionInformation),
+			randomJudgements = randomization.createJudgmentTemplate(stimuli.judgments),
+			questionScores = randomization.assignScores(questionsAndAnswers);
+
+		return {
+			questionsAndAnswers: questionsAndAnswers,
+			randomJudgements: randomJudgements,
+			questionScores: questionScores,
+			control: control
+		};
+	},
+
 	getQuestionsAndAnswers: function(questionInformation) {
 		return {
 			questions: stimuli.questionInformation.questions,
@@ -77,16 +92,30 @@ var randomization = {
 		};
 	},
 
-	getJudgementBlockTimeline: function(questions, scores) {
+	formatBoldQuestions: function(question, score, control) {
+		var text = '> **' + question + '**';
+		if (!control) {
+			text += '\n\n> **' + score.toString() + '** people upvoted this question';
+		}
+		return text;
+	},
+
+	formatRomanQuestions: function(question, score, control) {
+		var text = question;
+		if (!control) {
+			text += ' [' + score.toString() + ' people upvoted this question]';
+		}
+		return text;
+	},
+
+	getJudgementBlockTimeline: function(questions, scores, control) {
 		var timeline = [],
 			pos, text;
 		for (pos = 0; pos < questions.length; pos++) {
-			text = '### Topic\n\n> **' + 
-				questions[pos] +
-				'**\n\n> **' +
-				scores[pos].toString() + 
-				'** people upvoted this question\n\n' +
-				'### Your Responses';
+			text =
+				'### Question\n\n' + 
+				randomization.formatBoldQuestions(questions[pos], scores[pos], control) +
+				'\n\n### Your Responses';
 			timeline.push(
 				{preamble: converter.makeHtml(text)}
 			);
@@ -98,26 +127,21 @@ var randomization = {
 		var timeline = [],
 			pos, text;
 		for (pos = 0; pos < questions.length; pos++) {
-			text = questions[pos] + ' [' + scores[pos].toString() + 
-				' people upvoted this question]';
+			text = randomization.formatRomanQuestions(questions[pos], scores[pos], control);
 			timeline.push(text);
 		}
 		return timeline;
 	},
 
-	fillDisplayBlockPages: function(data, questions, scores, answers) {
+	fillDisplayBlockPages: function(data, questions, scores, answers, control) {
 		var output = [],
 			resp = JSON.parse(data.responses),
 			pos, text;
 		output.push('### Explanations');
 		for (pos = 0; pos < data.responses.length; pos++) {
 			if (resp['Q' + pos.toString()] === 'Reveal Answer') {
-				text = '> **' +
-					questions[pos] +
-					'**\n\n> **' +
-					scores[pos] +
-					'** people upvoted this question\n\n' +
-					answers[pos] +
+				text =
+					randomization.formatBoldQuestions(questions[pos], scores[pos], control) +
 					'\n\n\n';
 				output.push(text);
 			}
@@ -125,12 +149,3 @@ var randomization = {
 		return [converter.makeHtml(output.join('\n'))];
 	}
 }
-
-
-
-
-
-
-
-
-
