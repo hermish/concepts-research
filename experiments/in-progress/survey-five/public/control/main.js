@@ -14,11 +14,9 @@ jsPsych.data.addProperties({
 	control: control
 });
 
-
 /* -----------------------------
 PHASE 0: CONSENT & INTRODUCTION
 ----------------------------- */
-
 var consentBlock = {
 	type: 'survey-multi-choice',
 	preamble: [converter.makeHtml(literals.consentPage)],
@@ -47,7 +45,6 @@ var overallInstructions = {
 /* -----------------------------
 PHASE 1: RATING QUESTIONS
 ----------------------------- */
-
 var phaseOneIntructions = {
 	type: 'instructions',
 	pages: [converter.makeHtml(control ?
@@ -73,7 +70,6 @@ judgementBlock.timeline = randomization.getJudgementBlockTimeline(
 /* -----------------------------
 PHASE 2: CHOOSING QUESTIONS
 ----------------------------- */
-
 var phaseTwoIntructions = {
 	type: 'instructions',
 	pages: [converter.makeHtml(literals.phaseTwoIntructions)],
@@ -112,7 +108,6 @@ var displayBlock = {
 /* -----------------------------
 PHASE 3: WRITING DATA
 ----------------------------- */
-
 var bufferBlock = {
 	type: 'call-function',
 	func: function () {
