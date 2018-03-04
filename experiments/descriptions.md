@@ -26,6 +26,8 @@ In the second phase, again, we then asked them to reveal the answers to exactly 
 ## Survey-Six
 The question was a control to examine whether giving information about question views induced a similar effect on participants. To pilot the effect, we eliminated phase two, so now we only ask questions and ask participants to make judgements:
 
-1. 
+1. How curious are you to know about the question and its answer?
+2. How popular do you think this question is in this social forum?
+3. How many people, relatively, viewed this question?
 
 
