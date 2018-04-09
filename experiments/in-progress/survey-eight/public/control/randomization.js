@@ -198,8 +198,6 @@ var randomization = {
      * @param questions {string[]}: questions to be presented
      * @param scores {number[]}: corresponding scores
      * @param answers {string[]}: corresponding answers
-     * @param included {number[]}: an array of indices specifying questions
-     *  to be included
      * @param template {string}: pre-format string explaining number meaning
      */
     fillDisplayBlockPages: function(data, questions, scores, answers,
