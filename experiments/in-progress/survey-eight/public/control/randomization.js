@@ -205,15 +205,12 @@ var randomization = {
     fillDisplayBlockPages: function(data, questions, scores, answers, included,
                                     template) {
         var selections = randomization.parseSelections(data),
-            standardized = selections.map(function (number) {
-                return included[number];
-            }),
             output = [],
             pos, number, text;
 
         output.push(parameters.EXPLANATION_HEADER);
-        for (pos = 0; pos < standardized.length; pos++) {
-            number = standardized[pos];
+        for (pos = 0; pos < selections.length; pos++) {
+            number = selections[pos];
             text = randomization.formatBoldQuestions(questions[number],
                 scores[number], template) +
                 '\n\n' + answers[number] + '\n\n';
