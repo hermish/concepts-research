@@ -1,31 +1,33 @@
 /* PARTICIPANT JUDGEMENTS & QUESTIONS */
 var stimuli = Object.freeze({
-	templates: ['', 'Post #_', '_ people upvoted this'],
+    conditions: [
+        {template: '', questions: [0, 1, 2, 3, 4, 5, 6]},
+        {template: 'Post #_', questions: [0, 1, 2, 3, 4, 5, 6]},
+        {template: '_ people upvoted this', questions: [0, 1, 2, 3, 4, 5, 6]}
+    ],
 
     phaseOneQuiz: {
 	    questions: [
-            'How many different questions will you see in Phase 1?',
-            'Where are these questions taken from?'
+            'How many different questions will you see in Phase 1?'
         ],
         choices: [
-            ['5 questions', '7 questions', '10 questions', '15 questions'],
-            ['an online classroom', 'scientific research papers', 'A popular online forum', 'the last presidential debates']
+            ['5 questions', '7 questions', '10 questions', '15 questions']
         ]
     },
 
     phaseTwoQuiz: {
         questions: [
-            'How many questions can you choose to reveal?',
+            'How many questions can you choose to reveal?'
         ],
         choices: [
-            ['1 question', '3 questions', '5 questions', '7 questions'],
+            ['1 question', '3 questions', '5 questions', '7 questions']
         ]
     },
 
 	judgments: {
 		questions: [
             'How curious are you to know about the question and its answer?',
-            'How confident are you that you k0now the correct answer to this question?',
+            'How confident are you that you know the correct answer to this question?',
             'To what extent would knowing the answer to this question be useful to you in the future?',
             'How popular do you think this question is in this social forum?',
             'How well-written do you think this question is?',

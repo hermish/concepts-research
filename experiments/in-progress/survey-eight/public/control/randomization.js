@@ -6,24 +6,25 @@ var randomization = {
      *
      * @param stimuli: the literal object which contains questions and answers
      */
-	randomize: function(stimuli) {
-		var participantID = jsPsych.randomization.randomID(),
-            groupNumber = randomTools.randomInteger(stimuli.templates.length),
-            groupTemplate = stimuli.templates[groupNumber],
-			questionsAndAnswers = randomization.getQuestionsAndAnswers(
-			    stimuli.questionInformation),
-			randomJudgements = randomization.shuffleJudgments(
-			    stimuli.judgments),
-			questionScores = randomization.setupQuestions(questionsAndAnswers);
+    randomize: function(stimuli) {
+        var participantID = jsPsych.randomization.randomID(),
+            groupNumber = randomTools.randomInteger(stimuli.conditions.length),
+            groupTemplate = stimuli.conditions[groupNumber].template,
+            questionsAndAnswers = randomization.getQuestionsAndAnswers(
+                stimuli.questionInformation),
+            randomJudgements = randomization.shuffleJudgments(
+                randomization.selectJudgments(stimuli.judgments,
+                    stimuli.conditions[groupNumber].questions)),
+            questionScores = randomization.setupQuestions(questionsAndAnswers);
 
-		return {
+        return {
             participantID: participantID,
             groupNumber: groupNumber,
             groupTemplate: groupTemplate,
-			randomJudgements: randomJudgements,
-			questionScores: questionScores
-		};
-	},
+            randomJudgements: randomJudgements,
+            questionScores: questionScores
+        };
+    },
 
     /**
      * Packages relevant questions and corresponding answers into a single
@@ -32,12 +33,33 @@ var randomization = {
      * @param questionInformation: literal object which contains at least the
      *  questions and answers
      */
-	getQuestionsAndAnswers: function(questionInformation) {
-		return {
-			questions: questionInformation.questions,
-			answers: questionInformation.answers
-		};
-	},
+    getQuestionsAndAnswers: function(questionInformation) {
+        return {
+            questions: questionInformation.questions,
+            answers: questionInformation.answers
+        };
+    },
+
+    /**
+     * Returns a JsPsych object with only the selected judgement specified.
+     *
+     * @param judgments: literal object containing all judgments and
+     *  corresponding options.
+     * @param included {number[]}: an array of indices specifying questions
+     *  to be included.
+     */
+    selectJudgments: function (judgments, included) {
+        var selectedQuestions = included.map(function (number) {
+                return judgments.questions[number];
+            }),
+            selectedChoices =  included.map(function (number) {
+                return judgments.choices[number];
+            });
+        return {
+            questions: selectedQuestions,
+            choices: selectedChoices
+        };
+    },
 
     /**
      * Shuffles both the judgements and choices and keeps track of their
@@ -46,25 +68,25 @@ var randomization = {
      * @param judgments: the literal object which contains the judgement
      *  questions to ask participants and the corresponding choices
      */
-	shuffleJudgments: function(judgments) {
-		var allJudgments = judgments.questions,
-			allChoices = judgments.choices,
-			allIndices = randomTools.range(allJudgments.length),
+    shuffleJudgments: function(judgments) {
+        var allJudgments = judgments.questions,
+            allChoices = judgments.choices,
+            allIndices = randomTools.range(allJudgments.length),
 
-			randomIndices = jsPsych.randomization.shuffle(allIndices),
-			randomJudgments = randomIndices.map(function (number) {
-				return allJudgments[number];
-			}),
-			randomChoices = randomIndices.map(function (number) {
-				return allChoices[number];
-			});
+            randomIndices = jsPsych.randomization.shuffle(allIndices),
+            randomJudgments = randomIndices.map(function (number) {
+                return allJudgments[number];
+            }),
+            randomChoices = randomIndices.map(function (number) {
+                return allChoices[number];
+            });
 
-		return {
+        return {
             indices: randomIndices,
-			questions: randomJudgments,
-			choices: randomChoices
-		};
-	},
+            questions: randomJudgments,
+            choices: randomChoices
+        };
+    },
 
     /**
      * Randomly samples 10 question from those available, and assigns half
@@ -76,33 +98,33 @@ var randomization = {
      *  questions and corresponding answers.
      */
     setupQuestions: function(questionsAndAnswers) {
-		var allQuestions = questionsAndAnswers.questions,
-			allAnswers = questionsAndAnswers.answers,
+        var allQuestions = questionsAndAnswers.questions,
+            allAnswers = questionsAndAnswers.answers,
             allIndices = randomTools.range(allQuestions.length),
 
-			chosenIndices = jsPsych.randomization.sample(
+            chosenIndices = jsPsych.randomization.sample(
                 allIndices, parameters.GROUP_SIZE * 2, false),
-			chosenQuestions = chosenIndices.map(function (number) {
-				return allQuestions[number];
-			}),
-			chosenAnswers = chosenIndices.map(function (number) {
-				return allAnswers[number];
-			}),
+            chosenQuestions = chosenIndices.map(function (number) {
+                return allQuestions[number];
+            }),
+            chosenAnswers = chosenIndices.map(function (number) {
+                return allAnswers[number];
+            }),
 
-			randomScores = randomTools.getBimodalNormal(
-			    parameters.HIGH_SCORES,
+            randomScores = randomTools.getBimodalNormal(
+                parameters.HIGH_SCORES,
                 parameters.LOW_SCORES,
                 parameters.STANDARD_DEVIATION,
                 parameters.GROUP_SIZE
             ).map(Math.round);
 
-		return {
-			indices: chosenIndices,
-			questions: chosenQuestions,
-			answers: chosenAnswers,
-			scores: randomScores
-		};
-	},
+        return {
+            indices: chosenIndices,
+            questions: chosenQuestions,
+            answers: chosenAnswers,
+            scores: randomScores
+        };
+    },
 
     /**
      * Returns an interpolated string by replacing delimiter characters with a
@@ -158,20 +180,20 @@ var randomization = {
      * @param scores {number[]} corresponding scores
      * @param template {string}: pre-format string explaining number meaning
      */
-	getJudgementBlockTimeline: function(questions, scores, template) {
-		var timeline = [],
-			pos, text;
-		for (pos = 0; pos < questions.length; pos++) {
-			text = parameters.QUESTION_HEADER +
-				randomization.formatBoldQuestions(questions[pos], scores[pos],
+    getJudgementBlockTimeline: function(questions, scores, template) {
+        var timeline = [],
+            pos, text;
+        for (pos = 0; pos < questions.length; pos++) {
+            text = parameters.QUESTION_HEADER +
+                randomization.formatBoldQuestions(questions[pos], scores[pos],
                     template) +
                 parameters.RESPONSES_HEADER;
-			timeline.push(
-				{preamble: converter.makeHtml(text)}
-			);
-		}
-		return timeline;
-	},
+            timeline.push(
+                {preamble: converter.makeHtml(text)}
+            );
+        }
+        return timeline;
+    },
 
     /**
      * Makes a list of questions that will be used in the experiment.
@@ -179,16 +201,16 @@ var randomization = {
      * @param scores {number[]} corresponding scores
      * @param template {string}: pre-format string explaining number meaning
      */
-	getChooseBlockQuestions: function(questions, scores, template) {
-		var timeline = [],
-			pos, text;
-		for (pos = 0; pos < questions.length; pos++) {
-			text = randomization.formatRomanQuestions(questions[pos],
+    getChooseBlockQuestions: function(questions, scores, template) {
+        var timeline = [],
+            pos, text;
+        for (pos = 0; pos < questions.length; pos++) {
+            text = randomization.formatRomanQuestions(questions[pos],
                 scores[pos], template);
-			timeline.push(text);
-		}
-		return timeline;
-	},
+            timeline.push(text);
+        }
+        return timeline;
+    },
 
     /**
      * Sifts through participant question choices to reveal corresponding
@@ -201,22 +223,22 @@ var randomization = {
      * @param answers {string[]}: corresponding answers
      * @param template {string}: pre-format string explaining number meaning
      */
-	fillDisplayBlockPages: function(data, questions, scores, answers,
+    fillDisplayBlockPages: function(data, questions, scores, answers,
                                     template) {
-		var selections = randomization.parseSelections(data),
+        var selections = randomization.parseSelections(data),
             output = [],
-			pos, number, text;
+            pos, number, text;
 
-		output.push(parameters.EXPLANATION_HEADER);
-		for (pos = 0; pos < selections.length; pos++) {
-			number = selections[pos];
+        output.push(parameters.EXPLANATION_HEADER);
+        for (pos = 0; pos < selections.length; pos++) {
+            number = selections[pos];
             text = randomization.formatBoldQuestions(questions[number],
                 scores[number], template) +
                 '\n\n' + answers[number] + '\n\n';
             output.push(text)
-		}
-		return [converter.makeHtml(output.join('\n\n'))];
-	},
+        }
+        return [converter.makeHtml(output.join('\n\n'))];
+    },
 
     /**
      * Goes through all responses and returns an array with the indices of all
@@ -224,10 +246,10 @@ var randomization = {
      * @param data: user data, provided by the psychology library
      */
     parseSelections: function(data) {
-	    var allIndices = randomTools.range(data.responses.length),
+        var allIndices = randomTools.range(data.responses.length),
             resp = JSON.parse(data.responses);
-	    return allIndices.filter(function (pos) {
-	        return resp['Q' + pos.toString()] === parameters.POSITIVE_SELECTION
+        return allIndices.filter(function (pos) {
+            return resp['Q' + pos.toString()] === parameters.POSITIVE_SELECTION
         });
     }
 };

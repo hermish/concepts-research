@@ -7,6 +7,7 @@ var randomJudgements = output.randomJudgements;
 var questionScores = output.questionScores;
 
 jsPsych.data.addProperties({
+    responseType: 0,
     participantID: output.participantID,
     groupNumber: groupNumber,
 	judgmentIndices: randomJudgements.indices,
@@ -42,7 +43,11 @@ var startBufferBlock = {
         $.ajax({
             type: "POST",
             url: "/experiment-data",
-            data: JSON.stringify({participantID: output.participantID}),
+            data: JSON.stringify({
+                responseType: 1,
+                participantID: output.participantID,
+                groupNumber: groupNumber
+			}),
             contentType: "application/json"
         })
             .fail(function() {
@@ -73,7 +78,7 @@ var phaseOneQuiz = {
     preamble: [converter.makeHtml('## Instructions Review')],
     required: [true, true],
     questions: stimuli.phaseOneQuiz.questions,
-    options: stimuli.phaseOneQuiz.choices,
+    options: stimuli.phaseOneQuiz.choices
 };
 
 var judgementBlock = {
@@ -107,7 +112,7 @@ var phaseTwoQuiz = {
     preamble: [converter.makeHtml('## Instructions Review')],
     required: [true, true],
     questions: stimuli.phaseTwoQuiz.questions,
-    options: stimuli.phaseTwoQuiz.choices,
+    options: stimuli.phaseTwoQuiz.choices
 };
 
 var chooseBlock = {
