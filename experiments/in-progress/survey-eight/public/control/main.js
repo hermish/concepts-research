@@ -140,6 +140,7 @@ var displayBlock = {
             questionScores.questions,
             questionScores.scores,
             questionScores.answers,
+            stimuli.conditions[groupNumber].questions,
             template
         );
     },

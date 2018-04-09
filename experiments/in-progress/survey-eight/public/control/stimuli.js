@@ -1,8 +1,8 @@
 /* PARTICIPANT JUDGEMENTS & QUESTIONS */
 var stimuli = Object.freeze({
     conditions: [
-        {template: '', questions: [0, 1, 2, 3, 4, 5, 6]},
-        {template: 'Post #_', questions: [0, 1, 2, 3, 4, 5, 6]},
+        {template: '', questions: [0, 1, 2, 3, 4, 6]},
+        {template: 'Post #_', questions: [0, 1, 2, 3, 4, 6]},
         {template: '_ people upvoted this', questions: [0, 1, 2, 3, 4, 5, 6]}
     ],
 

@@ -3,7 +3,6 @@ var randomization = {
     /**
      * Makes the series of random choices which determines the experiment
      *  a participant will be put through.
-     *
      * @param stimuli: the literal object which contains questions and answers
      */
     randomize: function(stimuli) {
@@ -13,8 +12,8 @@ var randomization = {
             questionsAndAnswers = randomization.getQuestionsAndAnswers(
                 stimuli.questionInformation),
             randomJudgements = randomization.shuffleJudgments(
-                randomization.selectJudgments(stimuli.judgments,
-                    stimuli.conditions[groupNumber].questions)),
+                stimuli.judgments,
+                stimuli.conditions[groupNumber].questions),
             questionScores = randomization.setupQuestions(questionsAndAnswers);
 
         return {
@@ -41,39 +40,18 @@ var randomization = {
     },
 
     /**
-     * Returns a JsPsych object with only the selected judgement specified.
-     *
-     * @param judgments: literal object containing all judgments and
-     *  corresponding options.
-     * @param included {number[]}: an array of indices specifying questions
-     *  to be included.
-     */
-    selectJudgments: function (judgments, included) {
-        var selectedQuestions = included.map(function (number) {
-                return judgments.questions[number];
-            }),
-            selectedChoices =  included.map(function (number) {
-                return judgments.choices[number];
-            });
-        return {
-            questions: selectedQuestions,
-            choices: selectedChoices
-        };
-    },
-
-    /**
      * Shuffles both the judgements and choices and keeps track of their
      *  original position in the literal array.
-     *
      * @param judgments: the literal object which contains the judgement
      *  questions to ask participants and the corresponding choices
+     * @param included {number[]}: an array of indices specifying questions
+     *  to be included
      */
-    shuffleJudgments: function(judgments) {
+    shuffleJudgments: function(judgments, included) {
         var allJudgments = judgments.questions,
             allChoices = judgments.choices,
-            allIndices = randomTools.range(allJudgments.length),
 
-            randomIndices = jsPsych.randomization.shuffle(allIndices),
+            randomIndices = jsPsych.randomization.shuffle(included),
             randomJudgments = randomIndices.map(function (number) {
                 return allJudgments[number];
             }),
@@ -93,7 +71,6 @@ var randomization = {
      *  high numbers and half low numbers based on the parameters set. The
      *  function also keeps track of selected question's original position in
      *  the literal array.
-     *
      * @param questionsAndAnswers: the literal object which contains the
      *  questions and corresponding answers.
      */
@@ -221,17 +198,22 @@ var randomization = {
      * @param questions {string[]}: questions to be presented
      * @param scores {number[]}: corresponding scores
      * @param answers {string[]}: corresponding answers
+     * @param included {number[]}: an array of indices specifying questions
+     *  to be included
      * @param template {string}: pre-format string explaining number meaning
      */
-    fillDisplayBlockPages: function(data, questions, scores, answers,
+    fillDisplayBlockPages: function(data, questions, scores, answers, included,
                                     template) {
         var selections = randomization.parseSelections(data),
+            standardized = selections.map(function (number) {
+                return included[number];
+            }),
             output = [],
             pos, number, text;
 
         output.push(parameters.EXPLANATION_HEADER);
-        for (pos = 0; pos < selections.length; pos++) {
-            number = selections[pos];
+        for (pos = 0; pos < standardized.length; pos++) {
+            number = standardized[pos];
             text = randomization.formatBoldQuestions(questions[number],
                 scores[number], template) +
                 '\n\n' + answers[number] + '\n\n';
