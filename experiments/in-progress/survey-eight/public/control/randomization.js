@@ -202,7 +202,7 @@ var randomization = {
      *  to be included
      * @param template {string}: pre-format string explaining number meaning
      */
-    fillDisplayBlockPages: function(data, questions, scores, answers, included,
+    fillDisplayBlockPages: function(data, questions, scores, answers,
                                     template) {
         var selections = randomization.parseSelections(data),
             output = [],
