@@ -53,3 +53,6 @@ This was nearly identical to our original experiment, so in phase I participants
 7. To what extent would knowing the answer to this question be useful to you in a social setting?'
 
 In the second phase, we then asked them to reveal the answers to exactly five of the questions they saw during the experiment. Notice that the corresponding additional information, such as upvote information, or post number, was given as well.
+
+## Survey-Nine
+This is identical to the eighth experiment, although now 50% of participants take the survey with upvote information, while the remaining half is split between the two controls.
