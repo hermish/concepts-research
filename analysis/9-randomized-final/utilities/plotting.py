@@ -4,17 +4,9 @@ import matplotlib.pyplot as plt
 SAVE_KEY = 'save'
 
 
-def plot_double_bar(a_means, a_errs, b_means, b_errs, **kwargs):
-    fig, ax = plt.subplots()
-    ind, width = np.arange(len(a_means)), 0.35
-
-    ax.bar(ind, a_means, width, yerr=a_errs)
-    ax.bar(ind + width, b_means, width, yerr=b_errs)
-    _add_optional_double(fig, ax, ind, width, kwargs)
-    if SAVE_KEY in kwargs:
-        if kwargs[SAVE_KEY]:
-            plt.savefig(kwargs[SAVE_KEY])
-    plt.show()
+def label_graph(**kwargs):
+    for key, value in kwargs.items():
+        getattr(plt, key)(value)
 
 
 def plot_single_bar(means, errs=None, **kwargs):
@@ -23,37 +15,53 @@ def plot_single_bar(means, errs=None, **kwargs):
         plt.bar(ind, means, yerr=errs)
     else:
         plt.bar(ind, means)
-    _add_optional_single(ind, kwargs)
+    _add_optional_simple(ind, kwargs)
     if SAVE_KEY in kwargs:
         if kwargs[SAVE_KEY]:
             plt.savefig(kwargs[SAVE_KEY])
     plt.show()
 
 
-def _add_optional_single(ind, kwargs):
+def plot_double_bar(a_means, a_errs, b_means, b_errs, **kwargs):
+    fig, ax = plt.subplots()
+    ind, width = np.arange(len(a_means)), 0.35
+
+    ax.bar(ind, a_means, width, yerr=a_errs)
+    ax.bar(ind + width, b_means, width, yerr=b_errs)
+    _add_optional(fig, ax, ind, width, kwargs)
+    if SAVE_KEY in kwargs:
+        if kwargs[SAVE_KEY]:
+            plt.savefig(kwargs[SAVE_KEY])
+    plt.show()
+
+
+def plot_triple_bar(a_means, a_errs, b_means, b_errs, c_means, c_errs,
+                    **kwargs):
+    fig, ax = plt.subplots()
+    ind, width = np.arange(len(a_means)), 0.15
+
+    ax.bar(ind - width, a_means, width, yerr=a_errs)
+    ax.bar(ind, b_means, width, yerr=b_errs)
+    ax.bar(ind + width, c_means, width, yerr=c_errs)
+
+    _add_optional(fig, ax, ind, width, kwargs)
+    plt.show()
+
+
+def _add_optional_simple(ind, kwargs):
     for key, value in kwargs.items():
-        if key == 'x_label':
-            plt.xlabel(value)
-        if key == 'y_label':
-            plt.ylabel(value)
         if key == 'ticks':
             plt.xticks(ind, value)
-        if key == 'title':
-            plt.title(value)
+        else:
+            getattr(plt, key)(value)
 
 
-def _add_optional_double(fig, ax, ind, width, kwargs):
+def _add_optional(fig, ax, ind, width, kwargs):
     for key, value in kwargs.items():
-        if key == 'x_label':
-            plt.xlabel(value)
-        if key == 'y_label':
-            plt.ylabel(value)
         if key == 'ticks':
             ax.set_xticks(ind + width / 2)
             ax.set_xticklabels(value)
-        if key == 'legend':
-            plt.legend(value)
-        if key == 'title':
-            plt.title(value)
-        if key == 'size':
+        elif key == 'size':
             fig.set_size_inches(*value)
+        else:
+            getattr(plt, key)(value)
