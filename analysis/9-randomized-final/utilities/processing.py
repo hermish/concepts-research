@@ -2,7 +2,7 @@ import json
 import itertools
 
 THRESHOLD = 240.9
-
+ALL_JUDGMENTS = [0, 1, 2, 3, 4, 5, 6]
 
 def get_all_labels(num_questions):
     """
@@ -31,15 +31,18 @@ def get_col_labels(num_questions, num_judgments):
     :param num_judgments: (int) the number of responses
     :return: (gen) a generator yielding strings for column names
     """
-    yield 'consent'
+    yield from ('consent', 'participant_id', 'group_number', 'response_type',
+                'test_one', 'test_two')
     for q_num in range(num_questions // 2):
-        yield from ['low_q{}_score'.format(q_num),
-                    'low_q{}_index'.format(q_num)]
+        yield from ('low_q{}_score'.format(q_num),
+                    'low_q{}_index'.format(q_num),
+                    'low_q{}_choice'.format(q_num))
         for j_num in range(num_judgments):
             yield 'low_q{}_j{}'.format(q_num, j_num)
     for q_num in range(num_questions // 2):
-        yield from ['high_q{}_score'.format(q_num),
-                    'high_q{}_index'.format(q_num)]
+        yield from ('high_q{}_score'.format(q_num),
+                    'high_q{}_index'.format(q_num),
+                    'high_q{}_choice'.format(q_num))
         for j_num in range(num_judgments):
             yield 'high_q{}_j{}'.format(q_num, j_num)
 
@@ -52,36 +55,101 @@ def fill_experiment_data(data, master_responses):
     :return: (None) the dictionary data is mutated
     """
     for person in master_responses:
-        # Grab person and first response
         responses = person['data']
-        first_response = responses[0]
+        if _completed(responses):
+            _fill_completed_data(responses, data)
+        else:
+            _fill_view_data(responses, data)
 
-        # Gather experimental set-up information
-        judgment_indices = first_response['judgmentIndicies']
-        question_indices = first_response['questionIndicies']
-        question_scores = first_response['questionScores']
-        question_labels = _get_question_labels(question_scores)
 
-        # Update score and index information
-        for label, score, index in zip(question_labels, question_scores,
-                                       question_indices):
-            data['{}_score'.format(label)].append(score)
-            data['{}_index'.format(label)].append(index)
+def _fill_completed_data(responses, data):
+    """
+    :param responses: [dict] the data corresponding to a completed entry
+    :param data: (dict) the structured dictionary to be updated
+    :return: (None) updates the dictionary with response data
+    """
+    first_entry = responses[0]
+    judgment_indices = first_entry['judgmentIndices']
+    question_indices = first_entry['questionIndices']
+    question_scores = first_entry['questionScores']
+    question_labels = _get_question_labels(question_scores)
 
-        # Update consent information
-        consent_answer = json.loads(first_response['responses'])
-        consent_value = 1 if consent_answer['Q0'].startswith(
-            'I consent') else 0
-        data['consent'].append(consent_value)
+    # General information
+    data['response_type'].append(first_entry['responseType'])
+    data['participant_id'].append(first_entry['participantID'])
+    data['group_number'].append(first_entry['groupNumber'])
 
-        # Update judgment responses
-        headers = ('{}_j{}'.format(q_label, j_label) for q_label, j_label in
-                   itertools.product(question_labels, judgment_indices))
-        for likert_index in range(3, 13):
-            likert_data = responses[likert_index]
-            likert_responses = json.loads(likert_data['responses'])
-            for sorted_label in sorted(likert_responses):
-                data[next(headers)].append(int(likert_responses[sorted_label]))
+    # Scores and indices of questions
+    for label, score, index in zip(question_labels, question_scores,
+                                   question_indices):
+        data['{}_score'.format(label)].append(score)
+        data['{}_index'.format(label)].append(index)
+
+    # Consent information
+    consent_answer = json.loads(first_entry['responses'])
+    consent_value = int(consent_answer['Q0'].startswith('I consent'))
+    data['consent'].append(consent_value)
+
+    # Omitted judgements
+    for j_label in ALL_JUDGMENTS:
+        if j_label not in judgment_indices:
+            for q_label in question_labels:
+                data['{}_j{}'.format(q_label, j_label)].append(None)
+
+    # Test responses
+    test_one_response = json.loads(responses[4]['responses'])
+    test_two_response = json.loads(responses[16]['responses'])
+    test_one_value = int(test_one_response['Q0'].startswith('10'))
+    test_two_value = int(test_two_response['Q0'].startswith('5'))
+    data['test_one'].append(test_one_value)
+    data['test_two'].append(test_two_value)
+
+    # Actual responses
+    headers = ('{}_j{}'.format(q_label, j_label) for q_label, j_label in
+               itertools.product(question_labels, judgment_indices))
+    for likert_index in range(5, 15):
+        likert_data = responses[likert_index]
+        likert_responses = json.loads(likert_data['responses'])
+        for sorted_label in sorted(likert_responses):
+            data[next(headers)].append(int(likert_responses[sorted_label]))
+
+    # Update choices
+    choice_data = responses[17]
+    choice_responses = json.loads(choice_data['responses'])
+    for index, q_label in enumerate(question_labels):
+        choice_option = choice_responses.get('Q{}'.format(index), 'Keep Hidden')
+        choice_value = int(choice_option == 'Reveal Answer')
+        data['{}_choice'.format(q_label)].append(choice_value)
+
+
+def _fill_view_data(responses, data):
+    """
+    :param responses: (dict) the data corresponding to a view entry
+    :param data: (dict) the structured dictionary to be updated
+    :return: (None) updates the dictionary with response data
+    """
+    for attribute in data:
+        data[attribute].append(None)
+    data['response_type'][-1] = responses['responseType']
+    data['participant_id'][-1] = responses['participantID']
+    data['group_number'][-1] = responses['groupNumber']
+
+
+def _completed(responses):
+    """
+    :param responses: (object) the data corresponding to one entry in the
+        database
+    :return: (bool) true if the data corresponds to an entry triggered by
+        completing the survey, false if this from simply from starting; this
+        throws as AssertionError if neither of these cases are true
+    """
+    if type(responses) == dict:
+        assert responses['responseType'] == 1
+        return False
+    if type(responses) == list:
+        assert responses[0]['responseType'] == 0
+        return True
+
 
 def _get_question_labels(question_scores):
     """

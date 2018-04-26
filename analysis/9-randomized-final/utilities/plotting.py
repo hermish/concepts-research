@@ -17,9 +17,12 @@ def plot_double_bar(a_means, a_errs, b_means, b_errs, **kwargs):
     plt.show()
 
 
-def plot_single_bar(means, errs, **kwargs):
+def plot_single_bar(means, errs=None, **kwargs):
     ind = np.arange(len(means))
-    plt.bar(ind, means, yerr=errs)
+    if errs:
+        plt.bar(ind, means, yerr=errs)
+    else:
+        plt.bar(ind, means)
     _add_optional_single(ind, kwargs)
     if SAVE_KEY in kwargs:
         if kwargs[SAVE_KEY]:
