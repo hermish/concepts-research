@@ -12,8 +12,7 @@ var parameters = Object.freeze({
     LOW_SD: 0.3,
     // Literal parameters
     DELIMITER: '_',
-    QUESTION_HEADER: '### Question\n\n',
-    RESPONSES_HEADER: '\n\n### Your Responses',
-    EXPLANATION_HEADER: '### Explanations',
+    QUESTION_HEADER: '### Headline\n\n',
+    RESPONSES_HEADER: '\n\n\n#### Rate your Curiosity',
     POSITIVE_SELECTION: 'Reveal Answer'
 });

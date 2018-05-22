@@ -3,6 +3,8 @@
  *
  * This stylesheet provides minimal styling to make jsPsych
  * experiments look polished without any additional styles.
+ *
+ * Edited: Hermish Mehta
  */
 
 
@@ -21,7 +23,6 @@ body {
     color: #24292e;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 16px;
-    line-height: 1.5;
     word-wrap: break-word;
 }
 
@@ -38,6 +39,7 @@ h2 {
 h3 {
     font-size: 20px;
     font-weight: 600;
+    text-align: center;
 }
 
 h4 {
@@ -111,7 +113,7 @@ p {
 /* Form elements like input fields and buttons */
 
 input[type="text"] {
-    font-family: 'Open Sans', 'Arial', sans-sefif;
+    font-family: 'Open Sans', 'Arial', sans-serif;
     font-size: 14px;
 }
 
@@ -119,7 +121,7 @@ input[type="text"] {
 .jspsych-btn {
     display: inline-block;
     padding: 6px 12px;
-    margin: 0px 8px;
+    margin: 0 8px;
     font-size: 14px;
     font-weight: 400;
     cursor: pointer;
@@ -155,7 +157,7 @@ input[type="text"] {
     background-color: #ffffff;
     margin-bottom: 1em;
     text-align: center;
-    padding: 10px 0px;
+    padding: 10px 0;
 }
 #jspsych-progressbar-container s {}
 #jspsych-progressbar-outer {
@@ -168,7 +170,7 @@ input[type="text"] {
 #jspsych-progressbar-inner {
     background-color: #aaa;
     /* #3EB3D7; */
-    width: 0%;
+    width: 0;
     height: 1em;
     border-radius: 5px;
 }
@@ -261,10 +263,10 @@ input[type="text"] {
 /* PLUGIN: jspsych-survey-text */
 
 .jspsych-survey-text {
-    margin: 0.25em 0em;
+    margin: 0.25em 0;
 }
 .jspsych-survey-text-question {
-    margin: 2em 0em;
+    margin: 2em 0;
 }
 
 /* PLUGIN: jspsych-survey-likert */
@@ -340,7 +342,6 @@ input[type="text"] {
 }
 
 .jspsych-survey-multi-choice-option {
-    line-height: 2;
     line-height: 1.1em;
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
     font-size: 12px;
