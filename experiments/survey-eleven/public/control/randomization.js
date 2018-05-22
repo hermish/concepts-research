@@ -7,9 +7,9 @@ var randomization = {
      */
     randomize: function(stimuli) {
         var participantID = jsPsych.randomization.randomID(),
-            groupNumber = 1, // Force high science numbers
+            groupNumber = randomTools.randomInteger(parameters.GROUPS),
             conditionNumber = randomTools.randomInteger(parameters.CONDITIONS),
-            conditionTemplate = stimuli.templates[conditionNumber],
+            groupTemplate = stimuli.templates[conditionNumber],
             randomJudgements = randomization.shuffleJudgments(
                 stimuli.judgments,
                 randomTools.range(stimuli.judgments.length)),
@@ -21,7 +21,7 @@ var randomization = {
             participantID: participantID,
             groupNumber: groupNumber,
             conditionNumber: conditionNumber,
-            conditionTemplate: conditionTemplate,
+            groupTemplate: groupTemplate,
             randomJudgements: randomJudgements,
             randomArticles: randomArticles
         };
@@ -54,7 +54,6 @@ var randomization = {
             choices: randomChoices
         };
     },
-
 
     /**
      * Returns the articles so exactly five are randomly chosen from the first
@@ -101,7 +100,6 @@ var randomization = {
         );
     },
 
-
     /**
      * Collects information about the experiment set up based on random choices
      *  made previously, and packages this into an object.
@@ -140,7 +138,6 @@ var randomization = {
         };
     },
 
-
     /**
      * Returns an interpolated string by replacing delimiter characters with a
      *  string provided. If there are no such characters, then the template
@@ -153,7 +150,6 @@ var randomization = {
         return components.length > 1 ? components.join(number) :
             template;
     },
-
 
     /**
      * Inserts a score into the template, and then constructs a string with this
@@ -172,7 +168,6 @@ var randomization = {
         return interpolate === '' ? frontMatter : frontMatter + '\n\n>'
             + interpolate;
     },
-
 
     /**
      * Inserts a score into the template, and then constructs a string with this
@@ -212,7 +207,6 @@ var randomization = {
         return timeline;
     },
 
-
     /**
      * Makes a list of questions that will be used in the experiment.
      * @param questions {string[]} questions to be presented
@@ -230,46 +224,32 @@ var randomization = {
         return timeline;
     },
 
-
-    staticDisplayBlockPages: function (questions, numbers, answers, template) {
-        var output = Array.apply(null, Array(questions.length)),
-            text;
-        return output.map(function (value, index) {
-            text = randomization.formatBoldQuestions(
-                questions[index],
-                numbers[index],
-                template
-            );
-            text += '\n\n' + answers[index] + '\n\n';
-            return converter.makeHtml(text);
-        });
-    },
-
     /**
      * Sifts through participant question choices to reveal corresponding
      *  questions and answers. Puts together an array representing a list of
-     *  HTML pages to display, one headline selected on each page.
+     *  HTML pages to display, which will consist of one entry, including all
+     *  selected questions and answers.
      * @param data: user data, provided by the psychology library
      * @param questions {string[]}: questions to be presented
-     * @param numbers {number[]}: corresponding scores
+     * @param scores {number[]}: corresponding scores
      * @param answers {string[]}: corresponding answers
      * @param template {string}: pre-format string explaining number meaning
      */
-    fillDisplayBlockPages: function(data, questions, numbers, answers,
+    fillDisplayBlockPages: function(data, questions, scores, answers,
                                     template) {
         var selections = randomization.parseSelections(data),
-            text;
-        return selections.map(function (value) {
-            text = randomization.formatBoldQuestions(
-                questions[value],
-                numbers[value],
-                template
-            );
-            text += '\n\n' + answers[value] + '\n\n';
-            return converter.makeHtml(text);
-        });
-    },
+            output = [],
+            pos, number, text;
 
+        for (pos = 0; pos < selections.length; pos++) {
+            number = selections[pos];
+            text = randomization.formatBoldQuestions(questions[number],
+                scores[number], template) +
+                '\n\n' + answers[number] + '\n\n';
+            output.push(converter.makeHtml(text))
+        }
+        return output;
+    },
 
     /**
      * Goes through all responses and returns an array with the indices of all

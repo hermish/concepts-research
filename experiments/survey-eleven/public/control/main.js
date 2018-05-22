@@ -3,25 +3,25 @@ var converter = new showdown.Converter();
 var output = randomization.randomize(stimuli);
 var conditionNumber = output.conditionNumber;
 var groupNumber = output.groupNumber;
-var conditionTemplate = output.conditionTemplate;
+var groupTemplate = output.groupTemplate;
 var randomJudgements = output.randomJudgements;
 var randomArticles = output.randomArticles;
 
 jsPsych.data.addProperties({
     responseType: 0,
     participantID: output.participantID,
-    conditionNumber: conditionNumber,
     groupNumber: groupNumber,
+    conditionNumber: conditionNumber,
 	judgmentIndices: randomJudgements.indices,
     articleGroups: randomArticles.randomGroups,
     articleIndices: randomArticles.randomIndices,
     articleNumbers: randomArticles.randomNumbers
 });
 
-
 /**
  * PHASE 0: CONSENT & INTRODUCTION
  */
+
 var consentBlock = {
 	type: 'survey-multi-choice',
 	preamble: [converter.makeHtml(literals.consentPage)],
@@ -81,7 +81,7 @@ var judgementBlock = {
 	type: 'survey-likert',
 	questions: randomJudgements.questions,
 	required: Array.apply(null, Array(randomJudgements.questions.length)).map(
-        function() {return true;}
+        function() {return true}
     ),
 	randomize_order: false,
 	labels: randomJudgements.choices
@@ -90,12 +90,12 @@ var judgementBlock = {
 judgementBlock.timeline = randomization.getJudgementBlockTimeline(
 	randomArticles.randomHeadlines,
     randomArticles.randomNumbers,
-    conditionTemplate
+    groupTemplate
 );
 
 
 /**
- * PHASE 2: READING QUESTIONS
+ * PHASE 2: CHOOSING QUESTIONS
  */
 var phaseTwoInstructions = {
     type: 'instructions',
@@ -103,39 +103,47 @@ var phaseTwoInstructions = {
     show_clickable_nav: true
 };
 
+var chooseBlock = {
+    preamble: [converter.makeHtml(literals.choosePage)],
+    type: 'survey-multi-choose',
+    limit: parameters.NUM_ARTICLES,
+    randomize_order: false,
+    required: Array.apply(null, Array(randomArticles.randomHeadlines)).map(
+        function() {return true}
+    ),
+    options: ['Reveal Answer', 'Keep Hidden']
+};
+
+chooseBlock.questions = randomization.getChooseBlockQuestions(
+    randomArticles.randomHeadlines,
+    randomArticles.randomNumbers,
+    groupTemplate
+);
+
 var displayBlock = {
     type: 'instructions',
-    pages: randomization.staticDisplayBlockPages(
-        randomArticles.randomHeadlines,
-        randomArticles.randomNumbers,
-        randomArticles.randomText,
-        conditionTemplate
-    ),
+    pages: function () {
+        return randomization.fillDisplayBlockPages(
+            jsPsych.data.getLastTrialData(),
+            randomArticles.randomHeadlines,
+            randomArticles.randomNumbers,
+            randomArticles.randomText,
+            groupTemplate
+        );
+    },
     show_clickable_nav: true
 };
-
-
-/**
- * PHASE 3: ATTENTION QUIZ
- */
-var phaseThreeInstructions = {
-    type: 'instructions',
-    pages: [converter.makeHtml(literals.phaseThreeInstructions)],
-    show_clickable_nav: true
-};
-
-var attentionQuiz = {
-    type: 'survey-multi-choice',
-    preamble: [converter.makeHtml(literals.phaseThreePreamble)],
-    required: [true, true],
-    questions: stimuli.attentionQuiz.questions,
-    options: stimuli.attentionQuiz.choices
-};
-
 
 /**
  * PHASE 4: SUBMITTING DATA
  */
+var attentionQuiz = {
+    type: 'survey-multi-choice',
+    preamble: [converter.makeHtml('## Quiz')],
+    required: [true, true],
+    questions: stimuli.attentionQuiz.questions,
+    options: stimuli.attentionQuiz.choices
+};
 
 var submitBufferBlock = {
 	type: 'call-function',
@@ -161,20 +169,18 @@ var submitBufferBlock = {
  * RUNNING THE EXPERIMENT
  */
 var timeline = [
-    // Phase 0
 	consentBlock,
     startBufferBlock,
 	overallInstructions,
-    // Phase 1
+
     phaseOneInstructions,
     judgementBlock,
-    // Phase 2
+
     phaseTwoInstructions,
+    chooseBlock,
     displayBlock,
-    // Phase 3
-    phaseThreeInstructions,
+
     attentionQuiz,
-    // Phase 4
     submitBufferBlock
 ];
 

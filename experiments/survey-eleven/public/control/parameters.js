@@ -3,8 +3,8 @@ var parameters = Object.freeze({
     // Experimental Setup
     GROUPS: 2,
     CONDITIONS: 2,
-    NUM_ARTICLES: 2,
-    TOTAL_ARTICLES: 4,
+    NUM_ARTICLES: 5,
+    TOTAL_ARTICLES: 10,
     // Numerical parameters
     HIGH_MEAN: 90,
     HIGH_SD: 5,
