@@ -1,8 +1,8 @@
 /* PARTICIPANT JUDGEMENTS & QUESTIONS */
 var stimuli = Object.freeze({
     templates: [
-        'Probability: _% chance of appearing',
-        'Upvotes: _ thousand people upvoted this'
+        '*Probability:* _% chance of a question about this article appearing in Phase III.',
+        '*Upvotes:* _ people upvoted this.'
     ],
 
     judgments: {

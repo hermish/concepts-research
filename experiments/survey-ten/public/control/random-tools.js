@@ -19,9 +19,11 @@ var randomTools = {
         return randomTools.gaussRandom() * standardDev + mean;
     },
 
+
     /**
      * Returns an array of values of length specified, sampled from the
      *  parameterized normal distribution.
+     *
      * @param mean {number}: mean of normal random variable
      * @param standardDev {number}: corresponding standard deviation
      * @param number {number}: number of values required
@@ -35,10 +37,12 @@ var randomTools = {
         return output;
     },
 
+
     /**
      * Returns an array where exactly one half come from one normal
      *  distribution and the remaining from a second normal distribution with
      *  potentially different mean.
+     *
      * @param highMean {number}: mean of first distribution
      * @param lowMean {number}: mean of second distribution
      * @param standardDev {number}: standard deviation for both
@@ -51,6 +55,7 @@ var randomTools = {
         return jsPsych.randomization.shuffle(allScores);
     },
 
+
     /**
      * Returns a range array of integers [0, 1, ..., endPoint - 1].
      * @param endPoint {number}: the length required
@@ -61,6 +66,7 @@ var randomTools = {
         );
     },
 
+
     /**
      * Returns a random number uniformly at random from the set the range
      *  [0, 1, ..., values - 1].
@@ -70,10 +76,12 @@ var randomTools = {
         return Math.floor(Math.random() * Math.floor(values))
     },
 
+
     /**
      * Returns the number i in [0, 1, ..., length - 1] with probability given
      *  by probabilities[i]. Note the empirical distribution might be marginally
      *  different from the provided due to float round-off or comparison errors.
+     *
      * @param probabilities {number[]} empirical distribution of indices.
      */
     randomIndex: function(probabilities) {
@@ -90,12 +98,21 @@ var randomTools = {
         return probabilities.length - 1;
     },
 
-    assignRandomBinaryGroups: function (number) {
-        var zeros = Array.apply(null, Array(number)).map(
+
+    /**
+     * Returns a random array with elements in {0, 1} such that there are
+     *  exactly number of each. This corresponding to assigning exactly half
+     *  entries to one group and the other half to another, at random.
+     *
+     * @param size {number}: size of each group (i.e. number of zeros and ones
+     *  respectively)
+     */
+    assignRandomBinaryGroups: function (size) {
+        var zeros = Array.apply(null, Array(size)).map(
                 Number.prototype.valueOf, 0),
-            ones = Array.apply(null, Array(number)).map(
+            ones = Array.apply(null, Array(size)).map(
                 Number.prototype.valueOf, 1),
-            allGroups = zeros.concat(ones)
+            allGroups = zeros.concat(ones);
         return jsPsych.randomization.shuffle(allGroups);
     }
 };
