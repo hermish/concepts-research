@@ -129,6 +129,18 @@ def _fill_completed_data(responses, data):
     data['quiz_two'].append(quiz_two)
 
 
+def _get_ordered_labels(article_groups, article_indices):
+    """
+    :param article_groups: [int] group numbers corresponding to articles
+    :param article_indices: [int] indices of articles within groups options
+    :return: [str] ordered list of all labels for articles
+    """
+    labels = []
+    for group_num, index_num in zip(article_groups, article_indices):
+        labels.append('g{}_i{}'.format(group_num, index_num))
+    return labels
+
+
 def _fill_view_data(responses, data):
     """
     :param responses: (dict) the data corresponding to a view entry
