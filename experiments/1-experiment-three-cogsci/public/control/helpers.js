@@ -72,10 +72,10 @@ helpers.getJudgementBlockTimeline = function (questions, scores) {
 };
 
 helpers.formatQuestion = function (question, score) {
-    var text = '### Question\n> **' + question + '**\n\n> ';
-    text = score == null ?
-        text + 'No upvote information available.' :
-        text + '**' +  score.toString() + '** people upvoted this question';
+    var text = '### Question\n> **' + question + '**\n\n';
+    if (score !== null) {
+        text += '> **' + score.toString() + '** people upvoted this question';
+    }
     text += '\n\n### Your Responses';
     return text;
 };
