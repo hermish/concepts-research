@@ -8,13 +8,13 @@ var app = express();
 var emptySchema = new mongoose.Schema({}, { strict: false });
 var Entry = mongoose.model('Entry', emptySchema);
 
-// var location = process.env.CONNECTION;
-// mongoose.connect(location);
-// var db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'connection error'));
-// db.once('open', function callback() {
-//     console.log('database opened');
-// });
+var location = process.env.CONNECTION;
+mongoose.connect(location);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error'));
+db.once('open', function callback() {
+    console.log('database opened');
+});
 
 // --- STATIC MIDDLEWARE 
 app.use(express.static(__dirname + '/public'));
@@ -39,6 +39,6 @@ app.post('/experiment-data', function (request, response) {
 });
 
 // --- START THE SERVER 
-var server = app.listen(3000, function () { // 3000
+var server = app.listen(process.env.PORT, function () {
     console.log("Listening on port %d", server.address().port);
 });
