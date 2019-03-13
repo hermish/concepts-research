@@ -22,6 +22,6 @@ randomTools.getNormalRandom = function(mean, stdev, number) {
 
 randomTools.range = function(endPoint) {
     return Array.apply(null, Array(endPoint)).map(
-        function (_, index) {return index;}
+      function (_, index) {return index;}
     );
 };

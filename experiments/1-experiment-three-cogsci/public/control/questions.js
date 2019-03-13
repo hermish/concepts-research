@@ -22,6 +22,11 @@ questions.judgments = Object.freeze({
 	]
 });
 
+questions.attentionCheck = Object.freeze({
+  question: 'Please select the option furthest to the right, labelled "very useful."',
+  choices: ['not useful at all', '', '', '', '', '', 'very useful']
+});
+
 questions.questionsAndAnswers = {
 	"questions": [
 		"Why do your eyelids get puffy after crying?",
@@ -35,12 +40,14 @@ questions.questionsAndAnswers = {
 		"What gives something it's taste? Does pyrite taste like table salt because they are both cubes?",
 		"Why do typical spray pump bottles of cologne or perfume evaporate quickly when left on their side or \"tipped over,\" but not while upright?",
 		
-		"Why do car windows get a grid pattern on them",
+		"Why do car windows get a grid pattern on them?",
 		"Why is math (statistics, calculus, etc) so important for a strong programmer?",
-		"What makes something microwaveable or non-microwaveable? Is all food microwaveable?",
+		// "What makes something microwaveable or non-microwaveable? Is all food microwaveable?",
+    "What makes something microwaveable or non-microwaveable?",
 		"How do they get the liquid medicine to completely fill liquicaps, like Dayquil?",
-		"How do such small doses of things like cocaine and heroin kill you? How do these small powders have such a big effect on your body?",
-		"What causes those pulled neck muscles that happen from doing nothing like yawning or rolling in your sleep?",
+		// "How do such small doses of things like cocaine and heroin kill you? How do these small powders have such a big effect on your body?",
+    "How do such small doses of things like cocaine and heroin kill you?",
+    "What causes those pulled neck muscles that happen from doing nothing like yawning or rolling in your sleep?",
 		"What is the difference between forward and reverse osmosis?",
 		"How does sleep restore the body's energy?",
 		"How do our lungs prevent or eliminate dust?",
@@ -49,7 +56,8 @@ questions.questionsAndAnswers = {
 		"Why are bodies able to create an entire body with it's own lifetime supply of regenerative cells, but is itself unable to prevent gradual decay over a lifetime?",
 		"How does rabies induce hydrophobia?",
 		"How can certain animals such as frogs and flies freeze solid and survive, but most mammals suffer extreme tissue damage?",
-		"How do breeders ensure diversity among their animals' offspring? Wouldn't they have to constantly buy new breeding pairs?",
+		// "How do breeders ensure diversity among their animals' offspring? Wouldn't they have to constantly buy new breeding pairs?",
+    "How do breeders ensure diversity among their animals' offspring without having to constantly buy new breeding pairs?",
 		"If rockets use controlled explosions to propel forward, why can't we use a nuclear reaction to launch/fly our rockets?",
 		"How can alcohol withdrawal or detox kill you?",
 		"Why do tongues get weird bumps when burnt or after eating something really sweet or really salty?",
@@ -64,20 +72,27 @@ questions.questionsAndAnswers = {
 		"How do car dealerships make money when they claim the markup on new cars is only a few hundred dollars?",
 		"Why do US based airlines lag behind in service and quality, especially in their premium cabins?",
 		"What are the biological advantages and disadvantages of trees shedding their leaves vs keeping them all year round (deciduous vs coniferous)?",
-		"What determines where a person will store the excess fat? Why it differs from person to person?",
-		"Why are 9mm bullets less dangerous than 7.62 or even 5.56 ones? Shouldn't they deal more damage with bigger size?",
+		// "What determines where a person will store the excess fat? Why it differs from person to person?",
+    "What determines where a person will store the excess fat?",
+		// "Why are 9mm bullets less dangerous than 7.62 or even 5.56 ones? Shouldn't they deal more damage with bigger size?",
+    "Why are 9mm bullets less dangerous than 7.62 or even 5.56 ones, despite being larger?",
 		"When bacteria die, for example when boiling water, where do their corpses go?",
 		
-		"What happens that makes beer taste terrible after warming up and then re-chilling? What makes beer 'skunky'?",
+		// "What happens that makes beer taste terrible after warming up and then re-chilling? What makes beer 'skunky'?",
+    "What happens that makes beer taste terrible after warming up and then re-chilling?",
 		"What is the difference between beat, bar, steps, tempo, tact, and rhythm?",
 		"Why does shampoo not lather up well when you shampoo for the first time in a while?",
-		"Why is therapy effective? What is it about the brain that allows talking about your problems to help fix them?",
-		"Why do we toss and turn/constantly reposition ourselves during our sleep? What makes one position suddenly stop being comfortable even when we are not fully conscious?",
-		"What is the difference between time signatures that have the same ratio?",
-		"What's special about CO2 that we add it to water/soda and not other gasses? Why not use compressed air or another gas?",
+		// "Why is therapy effective? What is it about the brain that allows talking about your problems to help fix them?",
+		"What is it about the brain that allows talking about your problems (through therapy) help fix them?",
+		// "Why do we toss and turn/constantly reposition ourselves during our sleep? What makes one position suddenly stop being comfortable even when we are not fully conscious?",
+    "Why do we toss and turn/constantly reposition ourselves during our sleep?",
+    "What is the difference between time signatures that have the same ratio?",
+		// "What's special about CO2 that we add it to water/soda and not other gasses? Why not use compressed air or another gas?",
+    "What's special about CO2, compared to other gases, that we add it to water/soda?",
 		"What occurs physically that causes a person to foam at the mouth?",
 		"Why is it hard to implement a standard volume across various mediums like radio and television?",
-		"Why waves? All energy transfer in nature from one point to another happens in waves. Light, sound, even gravity travels in waves. Which fundamental property of nature is responsible for wave-like nature? Are there other non-wave like ways to transfer energy from one point to another?"
+		// "Why waves? All energy transfer in nature from one point to another happens in waves. Light, sound, even gravity travels in waves. Which fundamental property of nature is responsible for wave-like nature? Are there other non-wave like ways to transfer energy from one point to another?"
+		"Why does all energy transfer in nature from one point to another, including light, sound, even gravity, happens in waves?"
 	],
 	
 	"answers": [

@@ -1,73 +1,70 @@
 helpers = {
-    MIDDLE: 24,
-    HIGH_SCORES: 2405,
-    LOW_SCORES: 24,
-    STDEV: 10,
-    GROUP_SIZE: 12,
-    converter: new showdown.Converter()
+  MIDDLE: 24,
+  HIGH_SCORES: 2405,
+  LOW_SCORES: 24,
+  STDEV: 10,
+  GROUP_SIZE: 12,
+  converter: new showdown.Converter()
 };
 
-
 helpers.createJudgmentTemplate = function (judgments) {
-	var allIndicies = randomTools.range(judgments.questions.length),
-		randomIndicies = jsPsych.randomization.shuffle(allIndicies),
-		randomQuestions = randomIndicies.map(function (number) {
-			return judgments.questions[number];
-		}),
-		randomChoices = randomIndicies.map(function (number) {
-			return judgments.choices[number];
-		});
+  var allIndices = randomTools.range(judgments.questions.length),
+    randomIndices = jsPsych.randomization.shuffle(allIndices),
+    randomQuestions = randomIndices.map(function (number) {
+      return judgments.questions[number];
+    }),
+    randomChoices = randomIndices.map(function (number) {
+      return judgments.choices[number];
+    });
 
-	return {
-		questions: randomQuestions,
-		choices: randomChoices,
-		indicies: randomIndicies
-	};
+  return {
+    questions: randomQuestions,
+    choices: randomChoices,
+    indices: randomIndices
+  };
 };
 
 helpers.assignScores = function (questionsAndAnswers) {
-	var allIndicies = randomTools.range(questionsAndAnswers.questions.length),
-		chosenIndicies = jsPsych.randomization.sample(
-		    allIndicies, helpers.GROUP_SIZE, false
+  var allIndices = randomTools.range(questionsAndAnswers.questions.length),
+    chosenIndices = jsPsych.randomization.sample(
+        allIndices, helpers.GROUP_SIZE, false
         ),
-		chosenQuestions = chosenIndicies.map(function (number) {
-			return questionsAndAnswers.questions[number];
-		}),
-		chosenAnswers = chosenIndicies.map(function (number) {
-			return questionsAndAnswers.answers[number];
-		}),
-        randomScores = [];
+    chosenQuestions = chosenIndices.map(function (number) {
+      return questionsAndAnswers.questions[number];
+    }),
+    chosenAnswers = chosenIndices.map(function (number) {
+      return questionsAndAnswers.answers[number];
+    }),
+    randomScores = [];
 
-	console.log(chosenIndicies);
-
-	randomScores = randomScores.concat(
-	    randomTools.getNormalRandom(
-	        helpers.HIGH_SCORES,
-            helpers.STDEV,
-            helpers.GROUP_SIZE / 3
+  randomScores = randomScores.concat(
+      randomTools.getNormalRandom(
+          helpers.HIGH_SCORES,
+          helpers.STDEV,
+          helpers.GROUP_SIZE / 3
         ).map(Math.round),
         randomTools.getNormalRandom(
-	        helpers.LOW_SCORES,
-            helpers.STDEV,
-            helpers.GROUP_SIZE / 3
+          helpers.LOW_SCORES,
+          helpers.STDEV,
+          helpers.GROUP_SIZE / 3
         ).map(Math.round),
         new Array(helpers.GROUP_SIZE / 3).fill(null)
     );
-	randomScores = jsPsych.randomization.shuffle(randomScores);
+  randomScores = jsPsych.randomization.shuffle(randomScores);
 
-	return {
-		indicies: chosenIndicies,
-		questions: chosenQuestions,
-		answers: chosenAnswers,
-		scores: randomScores
-	};
+  return {
+    indices: chosenIndices,
+    questions: chosenQuestions,
+    answers: chosenAnswers,
+    scores: randomScores
+  };
 };
 
 helpers.getJudgementBlockTimeline = function (questions, scores) {
-    var text;
-	return timeline = questions.map(function (question, pos) {
-        text = helpers.formatQuestion(question, scores[pos]);
-        return {preamble: helpers.converter.makeHtml(text)}
+  return questions.map(function (question, pos) {
+      var text;
+      text = helpers.formatQuestion(question, scores[pos]);
+      return {preamble: helpers.converter.makeHtml(text)}
     });
 };
 
