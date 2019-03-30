@@ -21,10 +21,22 @@
         <script src="control/questions.js"></script>
         <script src="control/literals.js"></script>
         <script src="control/helpers.js"></script>
+        <!-- FirstImpression -->
+        <script src="control/firstImpression.min.js"></script>
+        <script type="text/javascript">
+            function checkDuplicate() {
+                if (!firstImpression()){
+                    window.location.href = "repeat"; // Send to repeat page
+                }
+            }
+        </script>
         <!-- Styling -->
         <link href="css/jspsychClean.css" rel="stylesheet" type="text/css"></link>
     </head>
     <body>
+        <script type="text/javascript">
+            checkDuplicate(); // Forbid duplicate participants
+        </script>
         <!-- App -->
         <script src="control/main.js"></script>
     </body>

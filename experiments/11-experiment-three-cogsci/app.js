@@ -27,8 +27,17 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 // --- ROUTING
-app.get('/', function(request, response) {
-    response.render('index.html');
+// Routing
+app.get('/', function (request, response) {
+  response.render('verify.html');
+});
+
+app.get('/index', function (request, response) {
+  response.render('index.html');
+});
+
+app.get('/repeat', function (request, response) {
+  response.render('repeat.html');
 });
 
 app.post('/experiment-data', function (request, response) {
