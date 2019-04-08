@@ -70,7 +70,7 @@ helpers.getJudgementBlockTimeline = function (questions, scores) {
 helpers.formatQuestion = function (question, score) {
     var text = '### Question\n> **' + question + '**\n\n';
     if (score !== null) {
-        text += '> **' + score.toString() + '** people upvoted this question';
+        text += '> **' + Number(score).toLocaleString() + '** people upvoted this question';
     }
     text += '\n\n### Your Responses';
     return text;
