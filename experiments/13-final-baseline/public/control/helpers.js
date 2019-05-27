@@ -35,21 +35,21 @@ helpers.assignScores = function (questionsAndAnswers) {
     chosenAnswers = chosenIndices.map(function (number) {
       return questionsAndAnswers.answers[number];
     }),
-    randomScores = [];
+    randomScores = new Array(chosenIndices.length).fill(null);
 
-  randomScores = randomScores.concat(
-      randomTools.getNormalRandom(
-          helpers.HIGH_SCORES,
-          helpers.STDEV,
-          helpers.GROUP_SIZE
-        ).map(Math.round),
-        randomTools.getNormalRandom(
-          helpers.LOW_SCORES,
-          helpers.STDEV,
-          helpers.GROUP_SIZE
-        ).map(Math.round)
-    );
-  randomScores = jsPsych.randomization.shuffle(randomScores);
+  // randomScores = randomScores.concat(
+  //     randomTools.getNormalRandom(
+  //         helpers.HIGH_SCORES,
+  //         helpers.STDEV,
+  //         helpers.GROUP_SIZE
+  //       ).map(Math.round),
+  //       randomTools.getNormalRandom(
+  //         helpers.LOW_SCORES,
+  //         helpers.STDEV,
+  //         helpers.GROUP_SIZE
+  //       ).map(Math.round)
+  //   );
+  // randomScores = jsPsych.randomization.shuffle(randomScores);
 
   return {
     indices: chosenIndices,

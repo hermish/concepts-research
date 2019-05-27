@@ -6,18 +6,18 @@ questions.judgments = Object.freeze({
 		'How curious are you about the answer to this question?',
 		'How confident are you that you know the correct answer to this question?',
 		'To what extent would knowing the answer to this question be useful to you in the future?',
-		'How popular do you think this question is in this social forum?',
+		// 'How popular do you think this question is in this social forum?',
 		// 'How well-written do you think this question is?',
-		'How surprised are you by the popularity of this question?',
+		// 'How surprised are you by the popularity of this question?',
 		'To what extent would knowing the answer to this question be useful to you in a social setting?'
 	],
 	choices: [
 		['not curious at all', '', '', '', '', '', 'very curious'],
 		['not confident at all', '', '', '', '', '', 'very confident'],
 		['not useful at all', '', '', '', '', '', 'very useful'],
-		['not at all', '', '', '', '', '', 'very popular'],
+		// ['not at all', '', '', '', '', '', 'very popular'],
 		// ['not at all', '', '', '', '', '',  'very well-written'],
-		['not surprised at all', '', '', '', '', '', 'very surprised'],
+		// ['not surprised at all', '', '', '', '', '', 'very surprised'],
 		['not useful at all', '', '', '', '', '', 'very useful']
 	]
 });
