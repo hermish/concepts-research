@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Question Survey</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8"/>
+        <!-- Essential -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://cdn.rawgit.com/showdownjs/showdown/1.8.3/dist/showdown.min.js"></script>
+        <!-- JsPysch and Stock Plugins -->
+        <script src="jsPsych/jspsych.js"></script>
+        <script src="jsPsych/plugins/jspsych-survey-multi-choice.js"></script>
+        <script src="jsPsych/plugins/jspsych-instructions.js"></script>
+        <script src="jsPsych/plugins/jspsych-text.js"></script>
+        <script src="jsPsych/plugins/jspsych-call-function.js"></script>
+        <!-- Custom JsPysch Plugins -->
+        <script src="plugins/likert.js"></script>
+        <script src="plugins/survey-multi-choose.js"></script>
+        <!-- Tools -->
+        <script src="control/random-tools.js"></script>
+        <script src="control/questions.js"></script>
+        <script src="control/literals.js"></script>
+        <script src="control/helpers.js"></script>
+        <!-- FirstImpression -->
+        <script src="control/firstImpression.min.js"></script>
+        <script type="text/javascript">
+            function checkDuplicate() {
+                if (!firstImpression()){
+                    window.location.href = "repeat"; // Send to repeat page
+                }
+            }
+        </script>
+        <!-- Styling -->
+        <link href="css/jspsychClean.css" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body>
+        <script type="text/javascript">
+            checkDuplicate(); // Forbid duplicate participants
+        </script>
+        <!-- App -->
+        <script src="control/main.js"></script>
+    </body>
+</html>
