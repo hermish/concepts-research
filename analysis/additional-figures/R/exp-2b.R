@@ -1,11 +1,13 @@
+dodge <- position_dodge(width = 0.7)
+
 graph <- data.frame(
   votes=factor(
     c(
       "low", "low", "low", "low", "low", "low",
-      "control", "control", "control", "control", "control", "control",
+      "baseline", "baseline", "baseline", "baseline", "baseline", "baseline",
       "high", "high", "high", "high", "high", "high"
     ),
-    levels=c("low", "high", "control")
+    levels=c("low", "baseline", "high")
   ),
   judgment=factor(c(
     'Curiosity', 'Confidence', 'Usefulness',
@@ -14,7 +16,7 @@ graph <- data.frame(
     'Popularity', 'Surprise', 'Social Utility',
     'Curiosity', 'Confidence', 'Usefulness',
     'Popularity', 'Surprise', 'Social Utility'
-  ), levels=c('Curiosity', 'Popularity', 'Confidence', 'Surprise', 'Social Utility', 'Usefulness')),
+  ), levels=c('Curiosity', 'Confidence', 'Social Utility', 'Usefulness', 'Popularity', 'Surprise')),
   mean=c(
     3.06090534979424, 1.7168724279835395, 2.5720164609053504, 1.8008230452674885, 2.416460905349795, 2.2255144032921814,
     3.484172661870501, 1.6143884892086335, 2.6496402877697847, 0, 0, 2.2496402877697848,
@@ -31,14 +33,14 @@ ggplot(
   data=graph,
   aes(x=judgment, y=mean, fill=votes)
 ) +
-  geom_bar(stat="identity", position = "dodge") + 
+  geom_bar(stat="identity", position = dodge, width=0.7) + 
   geom_errorbar(
     aes(
       ymin=mean-se, ymax=mean+se),
     width=0,
     size=0.75,
-    position=position_dodge(.9)
+    position=dodge#position_dodge(.9)
   ) + 
   theme_minimal() +
-  scale_fill_manual(values=c("#D9B8C5", "#88ABC2", "#D8D8D8"))
-
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_fill_manual(values=c("#D9B8C5", "#D8D8D8", "#88ABC2"))
